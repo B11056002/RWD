@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寵物樂園 - Pet Paradise</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links li {
+            cursor: pointer;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-links li:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+
+        .nav-links li.active {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-links li::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-links li:hover::before {
+            left: 100%;
+        }
+
+        /* Mobile menu */
+        .mobile-menu {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            color: white;
+        }
+
+        .mobile-menu span {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        /* Main content */
+        main {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+        }
+
+        .page {
+            display: none;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.5s ease;
+            padding: 2rem 0;
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Hero section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        /* Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card {
+            cursor: pointer;
+        }
+
+        .service-card .card-arrow {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .service-card:hover .card-arrow {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: scale(0);
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover::before {
+            transform: scale(1);
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card p {
+            opacity: 0.9;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Service section */
+        .services {
+            padding: 3rem 0;
+        }
+
+        .service-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .service-item:hover {
+            transform: translateX(10px);
+            box-shadow: -5px 5px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Gallery */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem 0;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-item::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .gallery-item:hover::after {
+            left: 100%;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                padding: 1rem;
+                border-top: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            .nav-links.show {
+                display: flex;
+            }
+
+            .mobile-menu {
+                display: flex;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nav-container {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Service detail pages */
+        .service-detail {
+            padding: 2rem 0;
+        }
+
+        .service-hero {
+            text-align: center;
+            padding: 3rem 0;
+            color: white;
+            position: relative;
+        }
+
+        .service-hero-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(3px 3px 6px rgba(0,0,0,0.4));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+            font-weight: 500;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .service-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .feature-item:hover::before {
+            left: 100%;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-item h4 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #FFD700;
+        }
+
+        .price-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin: 3rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            text-align: center;
+        }
+
+        .price-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .price-item {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .price-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+        }
+
+        .price-item h5 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #FFD700;
+        }
+
+        .price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #FF6B6B;
+            margin-bottom: 1rem;
+        }
+
+        /* About section */
+        .about-content {
+            padding: 2rem 0;
+        }
+
+        .about-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            transform: scale(0);
+            transition: transform 0.6s ease;
+        }
+
+        .about-section:hover::before {
+            transform: scale(1);
+        }
+
+        .about-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .about-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .about-icon {
+            font-size: 2.5rem;
+            margin-right: 1rem;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .about-section h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .about-section p {
+            line-height: 1.8;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 1rem;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .team-member {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-member::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.8s;
+        }
+
+        .team-member:hover::after {
+            left: 100%;
+        }
+
+        .team-member:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+        }
+
+        .member-avatar {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .member-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .member-role {
+            color: rgba(255, 255, 255, 0.8);
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+
+        .stat-item:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .stat-item:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #FFD700;
+            display: block;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            backdrop-filter: blur(10px);
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">🐾 寵物樂園</div>
+            <ul class="nav-links">
+                <li class="nav-item active" data-page="home">首頁</li>
+                <li class="nav-item" data-page="services">服務項目</li>
+                <li class="nav-item" data-page="gallery">寵物相簿</li>
+                <li class="nav-item" data-page="about">關於我們</li>
+            </ul>
+            <div class="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <!-- 首頁 -->
+        <section id="home" class="page active">
+            <div class="container">
+                <div class="hero">
+                    <h1 class="float">歡迎來到寵物樂園</h1>
+                    <p>給您的寵物最好的照顧與關愛</p>
+                </div>
+                
+                <div class="cards-grid">
+                    <div class="card service-card" data-service="dog">
+                        <div class="card-icon">🐕</div>
+                        <h3>專業狗狗照護</h3>
+                        <p>提供專業的狗狗美容、訓練和健康照護服務，讓您的愛犬擁有最佳的生活品質。</p>
+                        <div class="card-arrow">👉 點擊了解更多</div>
+                    </div>
+                    <div class="card service-card" data-service="cat">
+                        <div class="card-icon">🐱</div>
+                        <h3>貓咪專屬服務</h3>
+                        <p>溫柔細心的貓咪照護，包含美容、健康檢查和行為諮詢，讓貓主子開心每一天。</p>
+                        <div class="card-arrow">👉 點擊了解更多</div>
+                    </div>
+                    <div class="card service-card" data-service="small">
+                        <div class="card-icon">🐰</div>
+                        <h3>小動物照護</h3>
+                        <p>兔子、倉鼠、鳥類等小動物的專業照護服務，提供安全舒適的環境。</p>
+                        <div class="card-arrow">👉 點擊了解更多</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 服務項目 -->
+        <section id="services" class="page">
+            <div class="container">
+                <div class="hero">
+                    <h1>我們的服務</h1>
+                    <p>全方位的寵物照護解決方案</p>
+                </div>
+                
+                <div class="services">
+                    <div class="service-item">
+                        <h3>🛁 寵物美容</h3>
+                        <p>專業的寵物美容服務，包含洗澡、剪毛、指甲修剪、耳朵清潔等，讓您的寵物保持最佳外觀。使用天然無害的清潔產品，確保寵物的健康與安全。</p>
+                    </div>
+                    <div class="service-item">
+                        <h3>🏥 健康檢查</h3>
+                        <p>定期健康檢查服務，包含疫苗接種、健康評估、疾病預防諮詢。我們與專業獸醫合作，提供最完善的健康照護。</p>
+                    </div>
+                    <div class="service-item">
+                        <h3>🎓 行為訓練</h3>
+                        <p>專業的寵物行為訓練課程，幫助改善寵物的行為問題，建立良好的生活習慣。包含基礎服從訓練、社交化訓練等。</p>
+                    </div>
+                    <div class="service-item">
+                        <h3>🏠 寵物住宿</h3>
+                        <p>安全舒適的寵物住宿環境，24小時專人照護。設有獨立房間、遊戲區域，讓您的寵物在主人不在時也能快樂生活。</p>
+                    </div>
+                    <div class="service-item">
+                        <h3>🚗 接送服務</h3>
+                        <p>提供便利的寵物接送服務，專業的運輸設備確保寵物在運輸過程中的安全與舒適。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 寵物相簿 -->
+        <section id="gallery" class="page">
+            <div class="container">
+                <div class="hero">
+                    <h1>寵物明星們</h1>
+                    <p>看看這些可愛的毛孩子們</p>
+                </div>
+                
+                <div class="gallery">
+                    <div class="gallery-item">🐕‍🦺</div>
+                    <div class="gallery-item">🐈</div>
+                    <div class="gallery-item">🐕</div>
+                    <div class="gallery-item">🐱</div>
+                    <div class="gallery-item">🐰</div>
+                    <div class="gallery-item">🐹</div>
+                    <div class="gallery-item">🦮</div>
+                    <div class="gallery-item">🐈‍⬛</div>
+                    <div class="gallery-item">🐩</div>
+                </div>
+            </div>
+        </section>
+        <!-- 狗狗照護詳細頁面 -->
+        <section id="dog-service" class="page">
+            <div class="container">
+                <a href="#" class="back-button" onclick="showPage('home')">
+                    ← 返回首頁
+                </a>
+                
+                <div class="service-hero">
+                    <div class="service-hero-icon">🐕</div>
+                    <h1>專業狗狗照護服務</h1>
+                    <p>為您的愛犬提供全方位的專業照護</p>
+                </div>
+                
+                <div class="service-detail">
+                    <div class="service-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">🛁</span>
+                            <h4>專業洗澡美容</h4>
+                            <p>使用天然洗護產品，包含洗澡、吹乾、梳毛、指甲修剪、耳朵清潔等完整美容服務。根據不同犬種提供專業造型設計。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎓</span>
+                            <h4>行為訓練課程</h4>
+                            <p>提供基礎服從訓練、社交化訓練、不良行為矯正等課程。一對一專業指導，幫助建立良好的生活習慣。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🏥</span>
+                            <h4>健康檢查服務</h4>
+                            <p>定期健康檢查、疫苗接種、驅蟲服務、營養諮詢等。與專業獸醫合作，確保狗狗健康成長。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🏃</span>
+                            <h4>運動陪伴服務</h4>
+                            <p>專業遛狗服務、戶外運動陪伴、體能訓練等，讓狗狗保持健康活力的身心狀態。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🏠</span>
+                            <h4>寄宿照護服務</h4>
+                            <p>提供舒適安全的住宿環境，24小時專人照護，包含餵食、遊戲、散步等日常照料。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📱</span>
+                            <h4>即時狀況回報</h4>
+                            <p>服務期間提供照片、影片回報，讓主人隨時了解愛犬狀況，安心放心。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="price-section">
+                        <h3>🏷️ 服務價格</h3>
+                        <div class="price-grid">
+                            <div class="price-item">
+                                <h5>基礎美容</h5>
+                                <div class="price">NT$ 800</div>
+                                <p>洗澡 + 吹乾 + 指甲修剪</p>
+                            </div>
+                            <div class="price-item">
+                                <h5>完整美容</h5>
+                                <div class="price">NT$ 1200</div>
+                                <p>基礎美容 + 造型修剪 + 耳朵清潔</p>
+                            </div>
+                            <div class="price-item">
+                                <h5>訓練課程</h5>
+                                <div class="price">NT$ 1500</div>
+                                <p>單次一對一訓練 (60分鐘)</p>
+                            </div>
+                            <div class="price-item">
+                                <h5>日間寄宿</h5>
+                                <div class="price">NT$ 600</div>
+                                <p>單日寄宿照護服務</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 貓咪服務詳細頁面 -->
+        <section id="cat-service" class="page">
+            <div class="container">
+                <a href="#" class="back-button" onclick="showPage('home')">
+                    ← 返回首頁
+                </a>
+                
+                <div class="service-hero">
+                    <div class="service-hero-icon">🐱</div>
+                    <h1>貓咪專屬服務</h1>
+                    <p>為您的貓主子提供溫柔細心的專業照護</p>
+                </div>
+                
+                <div class="service-detail">
+                    <div class="service-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">✨</span>
+                            <h4>溫和清潔美容</h4>
+                            <p>針對貓咪特性設計的溫和洗護流程，減少貓咪緊張情緒。包含洗澡、吹乾、梳毛、指甲修剪等服務。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🧘</span>
+                            <h4>行為諮詢服務</h4>
+                            <p>專業的貓咪行為分析，協助解決抓家具、亂尿尿、攻擊性等行為問題，建立和諧的生活環境。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🩺</span>
+                            <h4>健康監測照護</h4>
+                            <p>定期健康檢查、疫苗接種、口腔護理、營養評估等，特別關注貓咪常見的腎臟和心臟問題。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎾</span>
+                            <h4>互動遊戲時光</h4>
+                            <p>豐富的互動玩具和遊戲活動，刺激貓咪的狩獵本能，保持身心健康活躍。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🏰</span>
+                            <h4>舒適住宿環境</h4>
+                            <p>安靜私密的貓咪專屬空間，配備貓跳台、舒適床鋪和獨立廁所，讓貓咪感到安心。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🍽️</span>
+                            <h4>個人化餵養</h4>
+                            <p>根據每隻貓咪的年齡、健康狀況和喜好提供客製化的飲食計畫。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="price-section">
+                        <h3>🏷️ 服務價格</h3>
+                        <div class="price-grid">
+                            <div class="price-item">
+                                <h5>基礎美容</h5>
+                                <div class="price">NT$ 900</div>
+                                <p>溫和洗澡 + 吹乾 + 指甲修剪</p>
+                            </div>
+                            <div class="price-item">
+                                <h5>完整美容</h5>
+                                <div class="price">NT$ 1300</div>
+                                <p>基礎美容 + 毛髮梳理 + 耳朵清潔</p>
+                            </div>
+                            <div class="price-item">
+                                <h5>行為諮詢</h5>
+                                <div class="price">NT$ 1200</div>
+                                <p>專業行為評估 + 改善建議</p>
+                            </div>
+                            <div class="price-item">
+                                <h5>日間照護</h5>
+                                <div class="price">NT$ 700</div>
+                                <p>單日專業照護服務</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 小動物照護詳細頁面 -->
+        <section id="small-service" class="page">
+            <div class="container">
+                <a href="#" class="back-button" onclick="showPage('home')">
+                    ← 返回首頁
+                </a>
+                
+                <div class="service-hero">
+                    <div class="service-hero-icon">🐰</div>
+                    <h1>小動物照護服務</h1>
+                    <p>為兔子、倉鼠、鳥類等小動物提供細心專業的照護</p>
+                </div>
+                
+                <div class="service-detail">
+                    <div class="service-features">
+                        <div class="feature-item">
+                            <span class="feature-icon">🏡</span>
+                            <h4>安全舒適環境</h4>
+                            <p>針對不同小動物特性設計的專屬空間，確保溫度、濕度、通風等環境條件最適宜。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🥕</span>
+                            <h4>專業營養餵養</h4>
+                            <p>根據各種小動物的營養需求提供適當飼料，新鮮蔬果搭配，確保營養均衡。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🔍</span>
+                            <h4>細心健康觀察</h4>
+                            <p>密切觀察小動物的食慾、活動力、排便等健康指標，及時發現異常狀況。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🧼</span>
+                            <h4>環境清潔維護</h4>
+                            <p>定期清理籠舍、更換墊料、清洗食具水具，維持乾淨衛生的生活環境。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">🎪</span>
+                            <h4>適度運動遊戲</h4>
+                            <p>提供適合的運動空間和玩具，讓小動物保持活力，避免無聊和壓力。</p>
+                        </div>
+                        <div class="feature-item">
+                            <span class="feature-icon">📋</span>
+                            <h4>詳細照護記錄</h4>
+                            <p>記錄每日餵食、活動、健康狀況等詳細資訊，讓主人了解愛寵的生活情況。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="price-section">
+                        <h3>🏷️ 服務價格</h3>
+                        <div class="price-grid">
+                            <div class="price-item">
+                                <h5>兔子照護</h5>
+                                <div class="price">NT$ 400</div>
+                                <p>單日專業照護服務</p>
+                            </div>
+                            <div class="price-item">
+                                <h5>倉鼠照護</h5>
+                                <div class="price">NT$ 300</div>
+                                <p>單日專業照護服務</p>
+                            </div>
+                            <div class="price-item">
+                                <h5>鳥類照護</h5>
+                                <div class="price">NT$ 500</div>
+                                <p>單日專業照護服務</p>
+                            </div>
+                            <div class="price-item">
+                                <h5>週間照護</h5>
+                                <div class="price">NT$ 2000</div>
+                                <p>7天連續照護服務</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 關於我們 -->
+        <section id="about" class="page">
+            <div class="container">
+                <div class="hero">
+                    <h1>關於我們</h1>
+                    <p>用心呵護每一個毛孩子的專業團隊</p>
+                </div>
+                
+                <div class="about-content">
+                    <div class="about-section">
+                        <div class="about-header">
+                            <span class="about-icon">🏢</span>
+                            <h3>我們的故事</h3>
+                        </div>
+                        <p>寵物樂園成立於2018年，源於創辦人對寵物的深厚愛意和專業熱忱。我們相信每一個毛孩子都值得被用心對待，因此致力於提供最優質的寵物照護服務。</p>
+                        <p>從最初的小型寵物美容工作室，到如今擁有完整服務體系的寵物照護中心，我們始終堅持「以愛為本，以專業為標準」的服務理念。</p>
+                    </div>
+
+                    <div class="about-section">
+                        <div class="about-header">
+                            <span class="about-icon">🎯</span>
+                            <h3>我們的使命</h3>
+                        </div>
+                        <p>透過專業的服務和無微不至的關懷，讓每一個寵物都能享受到最好的照護品質。我們不僅是寵物的照護者，更是牠們的朋友和守護者。</p>
+                        <p>我們致力於建立人與寵物之間更深層的情感連結，讓每個家庭都能與他們的寵物夥伴共享美好時光。</p>
+                    </div>
+
+                    <div class="about-section">
+                        <div class="about-header">
+                            <span class="about-icon">⭐</span>
+                            <h3>我們的價值觀</h3>
+                        </div>
+                        <p><strong>專業至上：</strong>持續學習最新的寵物照護知識和技術，確保提供最專業的服務。</p>
+                        <p><strong>用心關懷：</strong>將每一個寵物視為家人般珍惜，給予最溫暖的關愛。</p>
+                        <p><strong>安全第一：</strong>所有服務都以寵物的安全和健康為最高優先考量。</p>
+                        <p><strong>誠信服務：</strong>以誠待人，以信立業，建立長久的信任關係。</p>
+                    </div>
+
+                    <div class="about-section">
+                        <div class="about-header">
+                            <span class="about-icon">👥</span>
+                            <h3>專業團隊</h3>
+                        </div>
+                        <p>我們擁有一支經驗豐富、充滿愛心的專業團隊，每位成員都具備相關的專業證照和豐富的實務經驗。</p>
+                        
+                        <div class="team-grid">
+                            <div class="team-member">
+                                <span class="member-avatar">👩‍⚕️</span>
+                                <div class="member-name">李美君</div>
+                                <div class="member-role">首席獸醫師</div>
+                                <p>擁有15年寵物醫療經驗，專精於寵物內科和預防醫學。</p>
+                            </div>
+                            <div class="team-member">
+                                <span class="member-avatar">👨‍💼</span>
+                                <div class="member-name">陳志明</div>
+                                <div class="member-role">寵物行為訓練師</div>
+                                <p>國際認證的寵物行為專家，擅長解決各種行為問題。</p>
+                            </div>
+                            <div class="team-member">
+                                <span class="member-avatar">👩‍🎨</span>
+                                <div class="member-name">王小華</div>
+                                <div class="member-role">專業美容師</div>
+                                <p>創意十足的美容專家，讓每隻寵物都展現最美的一面。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="about-section">
+                        <div class="about-header">
+                            <span class="about-icon">📊</span>
+                            <h3>服務成果</h3>
+                        </div>
+                        <p>多年來，我們已經為數千個家庭提供優質的寵物照護服務，建立了良好的口碑和信譽。</p>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-number">2500+</span>
+                                <span class="stat-label">服務寵物數量</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">98%</span>
+                                <span class="stat-label">客戶滿意度</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">6</span>
+                                <span class="stat-label">服務年數</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">24/7</span>
+                                <span class="stat-label">緊急服務</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 寵物樂園 Pet Paradise. 給您的寵物最好的關愛。</p>
+        </div>
+    </footer>
+
+    <script>
+
+        function showPage(pageId) {
+    const pages = document.querySelectorAll('.page');
+    pages.forEach(page => page.classList.remove('active'));
+    document.getElementById(pageId).classList.add('active');
+  }
+        // 點擊服務卡片跳轉對應頁面
+        const serviceCards = document.querySelectorAll('.service-card');
+        serviceCards.forEach(card => {
+        card.addEventListener('click', () => {
+        const service = card.getAttribute('data-service');
+        const targetPageId = `${service}-service`;
+
+        // 隱藏所有頁面
+        pages.forEach(page => page.classList.remove('active'));
+
+        // 顯示對應服務頁面
+        document.getElementById(targetPageId).classList.add('active');
+    });
+});
+
+        // 頁面切換功能
+        const navItems = document.querySelectorAll('.nav-item');
+        const pages = document.querySelectorAll('.page');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
+
+        // 頁面切換
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const targetPage = item.getAttribute('data-page');
+                
+                // 移除所有活動狀態
+                navItems.forEach(nav => nav.classList.remove('active'));
+                pages.forEach(page => page.classList.remove('active'));
+                
+                // 添加活動狀態
+                item.classList.add('active');
+                document.getElementById(targetPage).classList.add('active');
+                
+                // 關閉移動端菜單
+                navLinks.classList.remove('show');
+            });
+        });
+
+        // 移動端菜單切換
+        mobileMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
+        });
+
+        // 滾動效果
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.background = 'rgba(255, 255, 255, 0.15)';
+            } else {
+                nav.style.background = 'rgba(255, 255, 255, 0.1)';
+            }
+        });
+
+        // 卡片動畫效果
+        const cards = document.querySelectorAll('.card');
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                }
+            });
+        }, observerOptions);
+
+        cards.forEach(card => {
+            observer.observe(card);
+        });
+
+        // 相簿項目點擊效果
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        galleryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                item.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    item.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // 添加滑鼠跟隨效果
+        document.addEventListener('mousemove', (e) => {
+            const cards = document.querySelectorAll('.card');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            
+            cards.forEach((card, index) => {
+                const strength = (index + 1) * 2;
+                const rotateX = (y - 0.5) * strength;
+                const rotateY = (0.5 - x) * strength;
+                
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+        });
+    </script>
+</body>
+</html>
